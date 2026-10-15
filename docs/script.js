@@ -479,7 +479,7 @@ function showItems(text, label) {
   status.className = "";
   try {
     init(parseItems(text));
-    status.textContent = "Loaded ${label}";
+    status.textContent = "Loaded";
   } catch (err) {
     status.className = "error";
     status.textContent = err.message;
@@ -494,11 +494,11 @@ async function loadDefault() {
   const status = document.getElementById("status");
   try {
     const response = await fetch("tech-literacy.xml");
-    if (!response.ok) throw new Error("HTTP ${response.status}"); //https://johnkavanagh.co.uk/articles/the-fetch-api-for-beginners-get-post-json-and-errors/
+    if (!response.ok) throw new Error(`HTTP ${response.status}`); //https://johnkavanagh.co.uk/articles/the-fetch-api-for-beginners-get-post-json-and-errors/
     showItems(await response.text(), "tech-literacy.xml");
   } catch (err) {
     status.className = "error";
-    status.textContent = "${err.message}";
+    status.textContent = `${err.message}`;
   }
 }
 
