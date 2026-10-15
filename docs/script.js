@@ -474,16 +474,15 @@ function init(items) {
   renderAll();
 }
 
-async function loadFile(file) {
+async function loadDefault() {
   const status = document.getElementById("status");
-  status.className = "";
   try {
-    const text = await file.text();
-    init(parseItems(text));
-    status.textContent = `Loaded ${file.name}`;
+    const response = await fetch("tech-literacy.xml");
+    if (!response.ok) throw new Error(`HTTP ${response.status}`); //https://johnkavanagh.co.uk/articles/the-fetch-api-for-beginners-get-post-json-and-errors/
+    showItems(await response.text(), "tech-literacy.xml");
   } catch (err) {
     status.className = "error";
-    status.textContent = err.message;
+    status.textContent = `${err.message}`;
   }
 }
 
@@ -493,31 +492,6 @@ window.onload = function () {
   const drop = document.getElementById("drop");
   const fileInput = document.getElementById("file");
 
-  drop.addEventListener("click", (ev) => {
-    if (ev.target !== fileInput) fileInput.click();
-  });
-  fileInput.addEventListener(
-    "change",
-    () => fileInput.files[0] && loadFile(fileInput.files[0]),
-  );
-
-  ["dragenter", "dragover"].forEach((name) =>
-    drop.addEventListener(name, (ev) => {
-      ev.preventDefault();
-      drop.classList.add("over");
-    }),
-  );
-  ["dragleave", "drop"].forEach((name) =>
-    drop.addEventListener(name, (ev) => {
-      ev.preventDefault();
-      drop.classList.remove("over");
-    }),
-  );
-  drop.addEventListener(
-    "drop",
-    (ev) => ev.dataTransfer.files[0] && loadFile(ev.dataTransfer.files[0]),
-  );
-
   document.getElementById("minCount").addEventListener("input", (ev) => {
     state.minCount = Number(ev.target.value);
     document.getElementById("minOut").textContent = ev.target.value;
@@ -526,4 +500,5 @@ window.onload = function () {
   document
     .getElementById("clear")
     .addEventListener("click", () => select(state.selected));
+  loadDefault();
 };
